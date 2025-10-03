@@ -1,7 +1,6 @@
 package com.azri.moviedbjetpackcompose.movie.data.repository_impl
 
 import com.azri.moviedbjetpackcompose.common.data.ApiMapper
-import com.azri.moviedbjetpackcompose.movie.data.mapper_impl.MovieMapperImpl
 import com.azri.moviedbjetpackcompose.movie.data.remote.api.MovieApiService
 import com.azri.moviedbjetpackcompose.movie.data.remote.models.MovieDto
 import com.azri.moviedbjetpackcompose.movie.domain.models.Movie
