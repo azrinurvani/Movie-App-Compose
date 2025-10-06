@@ -33,6 +33,7 @@ class MovieRepositoryImpl @Inject constructor(
             emit(Response.Success(this))
         }
     }.catch { e ->
+
         emit(Response.Error(e))
     }
 }

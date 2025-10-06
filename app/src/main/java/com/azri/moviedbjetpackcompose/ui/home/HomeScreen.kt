@@ -24,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.azri.moviedbjetpackcompose.ui.components.LoadingView
+import com.azri.moviedbjetpackcompose.ui.home.component.BodyContent
 import com.azri.moviedbjetpackcompose.ui.home.component.TopContent
 import kotlinx.coroutines.delay
 
@@ -76,8 +78,8 @@ fun HomeScreen(
             )
         }
 
-        //Loading View
-        AnimatedVisibility(visible = state.isLoading && state.error == null) {
+        //Content View
+        AnimatedVisibility(visible = !state.isLoading && state.error == null) {
             BoxWithConstraints(
                 modifier = Modifier.fillMaxSize()
             ){
@@ -117,7 +119,17 @@ fun HomeScreen(
                         )
                     }
                 }
+                BodyContent(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .heightIn(max = bodyItemHeight),
+                    discoverMovies = state.discoverMovies,
+                    trendingMovies = state.trendingMovies,
+                    onMovieClick = onMovieClick
+                )
             }
         }
     }
+    //Loading View
+    LoadingView(isLoading = state.isLoading)
 }

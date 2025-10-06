@@ -6,6 +6,7 @@ import com.azri.moviedbjetpackcompose.movie.domain.models.Movie
 import com.azri.moviedbjetpackcompose.movie.domain.repository.MovieRepository
 import com.azri.moviedbjetpackcompose.utils.collectAndHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -22,9 +23,10 @@ class HomeViewModel @Inject constructor(
 
     init {
         fetchDiscoverMovie()
+        fetchTrendingMovie()
     }
 
-    private fun fetchDiscoverMovie() = viewModelScope.launch {
+    private fun fetchDiscoverMovie() = viewModelScope.launch(Dispatchers.IO) {
         repository.fetchDiscoverMovie().collectAndHandle(
             onError = { error->
                 _homeState.update {

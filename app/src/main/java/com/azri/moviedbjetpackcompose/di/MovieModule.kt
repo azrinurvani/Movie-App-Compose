@@ -1,5 +1,6 @@
 package com.azri.moviedbjetpackcompose.di
 
+import android.util.Log
 import com.azri.moviedbjetpackcompose.common.data.ApiMapper
 import com.azri.moviedbjetpackcompose.movie.data.mapper_impl.MovieMapperImpl
 import com.azri.moviedbjetpackcompose.movie.data.remote.api.MovieApiService
@@ -15,6 +16,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import javax.inject.Singleton
 
@@ -30,11 +33,29 @@ object MovieModule {
 
     @Provides
     @Singleton
+    fun provideHttpLoggingInterceptor() : HttpLoggingInterceptor{
+        return HttpLoggingInterceptor{ message ->
+            Log.d("API-LOG", message)
+        }.apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+    }
+
+    @Provides
+    @Singleton
     fun provideMovieRepository(
         movieApiService: MovieApiService,
         apiMapper: ApiMapper<List<Movie>, MovieDto>
     ) : MovieRepository{
         return MovieRepositoryImpl(movieApiService,apiMapper)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(loggingInterceptor: HttpLoggingInterceptor) : OkHttpClient{
+        return OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .build()
     }
 
     @Provides
@@ -45,10 +66,11 @@ object MovieModule {
 
     @Provides
     @Singleton
-    fun provideRetrofitBuilder() : Retrofit{
+    fun provideRetrofitBuilder(okHttpClient: OkHttpClient) : Retrofit{
         val contentType = "application/json".toMediaType()
         return Retrofit.Builder()
             .baseUrl(K.BASE_URL)
+            .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory(contentType))
             .build()
     }
